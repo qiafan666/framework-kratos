@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package api.test.service.resource.v1;
+option go_package = "framework-kratos/api/test/service/v1;v1";
+
+import "google/protobuf/timestamp.proto";
+
+message Test{
+  int64 id = 1;
+  google.protobuf.Timestamp created_time = 2; // 创建时间
+  google.protobuf.Timestamp updated_time = 3; // 创建时间
+  int32 is_deleted = 4; // 是否删除
+  string name = 5; // 名称
+  string age = 6; // 年龄
+  string desc = 7; // 描述
+}

@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package common;
+
+import "validate/validate.proto";
+
+option go_package = "framework-kratos/api/common/v1;v1";
+
+// Page 分页
+message Page {
+  // 当前页面
+  uint64 current = 1 [(validate.rules).uint64 = {gte: 1}];
+  // 页面大小
+  uint64 size = 2 [(validate.rules).uint64 = {
+    gte: 1,
+    lte: 100
+  }];
+}
