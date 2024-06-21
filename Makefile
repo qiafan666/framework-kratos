@@ -21,7 +21,7 @@ name:
 
 
 API_Path := "api"
-APP_PATH := "app1"
+APP_PATH := "app"
 
 api: add grpc http swagger errors proto server
 
