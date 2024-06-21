@@ -11,12 +11,19 @@ PATH_WITHOUT_PROJECT = $(subst $(word 1,$(subst /, ,$(DIR_PATH)))/,,$(DIR_PATH))
 
 # 使用basename函数获取文件名
 FILE_NAME := $(basename $(notdir $(PROTO_PATH)))
+UPPER_FILE_NAME := $(shell echo $(FILE_NAME) | awk '{print toupper(substr($$0, 1, 1)) substr($$0, 2)}')
+
+name:
+	@echo $(PATH_WITHOUT_PROJECT)
+	@echo $(DIR_PATH)
+	@echo $(FILE_NAME)
+	@echo $(UPPER_FILE_NAME)
 
 
 API_Path := "api"
-APP_PATH := "app"
+APP_PATH := "app1"
 
-api: add grpc http swagger errors proto server replace
+api: add grpc http swagger errors proto server
 
 gen: add project grpc http errors swagger proto server replace
 
@@ -112,9 +119,12 @@ replace:
 	LAST_FOLDER=$$(basename $(PATH_WITHOUT_PROJECT)) && \
 	cd $$(dirname $(PATH_WITHOUT_PROJECT)) && \
 	echo "Running find in: $$(pwd)/$$LAST_FOLDER" && \
-	find $$LAST_FOLDER -type f -exec sed -i '' 's/Greeter/Test/g' {} + \
-	-exec sed -i '' 's/greeter/test/g' {} + \
-
+	find $$LAST_FOLDER -type f -exec sh -c '\
+	sed -i "" -e "s/test/$(UPPER_FILE_NAME)/g" $$0 \
+	' {} \;
+	find $$LAST_FOLDER -type f -exec sh -c '\
+	sed -i "" -e "s/test/$(FILE_NAME)/g" $$0 \
+	' {} \;
 
 .PHONY: build
 # build
