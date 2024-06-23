@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package api.test.service.v1;
 
-option go_package = "framework-kratos/api/test/service/v1;v1";
+option go_package = "framework-kratos/api/test/service/v1/gen;v1";
 option java_multiple_files = true;
 option java_package = "api.test.service.v1";
 

@@ -4,7 +4,7 @@
 // - protoc             v5.27.0
 // source: test.proto
 
-package v1
+package gen
 
 import (
 	context "context"

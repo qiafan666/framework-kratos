@@ -2,15 +2,14 @@ package service
 
 import (
 	"context"
+	"framework-kratos/api/test/service/v1/gen"
 	"framework-kratos/app/test/service/v1/internal/biz"
 	"framework-kratos/app/test/service/v1/model"
 	"github.com/go-kratos/kratos/v2/log"
-
-	pb "framework-kratos/api/test/service/v1"
 )
 
 type TestService struct {
-	pb.UnimplementedTestServer
+	gen.UnimplementedTestServer
 	log      *log.Helper
 	testCase *biz.TestCase
 }
@@ -22,35 +21,35 @@ func NewTestService(tc *biz.TestCase, logger log.Logger) *TestService {
 	}
 }
 
-func (s *TestService) CreateTest(ctx context.Context, req *pb.CreateTestRequest) (*pb.CreateTestReply, error) {
+func (s *TestService) CreateTest(ctx context.Context, req *gen.CreateTestRequest) (*gen.CreateTestReply, error) {
 	err := s.testCase.CreateTest(ctx, &model.Test{})
 	if err != nil {
 		return nil, err
 	}
-	return &pb.CreateTestReply{}, nil
+	return &gen.CreateTestReply{}, nil
 }
-func (s *TestService) UpdateTest(ctx context.Context, req *pb.UpdateTestRequest) (*pb.UpdateTestReply, error) {
+func (s *TestService) UpdateTest(ctx context.Context, req *gen.UpdateTestRequest) (*gen.UpdateTestReply, error) {
 	err := s.testCase.UpdateTest(ctx, &model.Test{})
 	if err != nil {
 		return nil, err
 	}
-	return &pb.UpdateTestReply{}, nil
+	return &gen.UpdateTestReply{}, nil
 }
-func (s *TestService) DeleteTest(ctx context.Context, req *pb.DeleteTestRequest) (*pb.DeleteTestReply, error) {
+func (s *TestService) DeleteTest(ctx context.Context, req *gen.DeleteTestRequest) (*gen.DeleteTestReply, error) {
 	err := s.testCase.DeleteTest(ctx, 1)
 	if err != nil {
 		return nil, err
 	}
-	return &pb.DeleteTestReply{}, nil
+	return &gen.DeleteTestReply{}, nil
 }
-func (s *TestService) GetTest(ctx context.Context, req *pb.GetTestRequest) (*pb.GetTestReply, error) {
+func (s *TestService) GetTest(ctx context.Context, req *gen.GetTestRequest) (*gen.GetTestReply, error) {
 	_, err := s.testCase.GetTest(ctx, 1)
 	if err != nil {
 		return nil, err
 	}
 
-	return &pb.GetTestReply{}, nil
+	return &gen.GetTestReply{}, nil
 }
-func (s *TestService) ListTest(ctx context.Context, req *pb.ListTestRequest) (*pb.ListTestReply, error) {
-	return &pb.ListTestReply{}, nil
+func (s *TestService) ListTest(ctx context.Context, req *gen.ListTestRequest) (*gen.ListTestReply, error) {
+	return &gen.ListTestReply{}, nil
 }
