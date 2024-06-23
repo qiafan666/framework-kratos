@@ -46,6 +46,7 @@ init:
 add:
 	if [ -d $(PROTO_PATH) ]; then exit 0; fi; \
 	kratos proto add $(PROTO_PATH)
+	mkdir -p $(DIR_PATH)/gen
 
 .PHONY: project
 # 假设您要在命令行中指定路径
@@ -68,8 +69,8 @@ project:
 grpc:
 	 cd $(DIR_PATH) && protoc --proto_path=. \
            --proto_path=../../../../third_party \
-           --go_out=paths=source_relative:. \
-           --go-grpc_out=paths=source_relative:. \
+           --go_out=paths=source_relative:./gen \
+           --go-grpc_out=paths=source_relative:./gen \
            ./$(FILE_NAME).proto
 
 .PHONY: http
@@ -77,8 +78,8 @@ grpc:
 http:
 	 cd $(DIR_PATH) && protoc --proto_path=. \
            --proto_path=../../../../third_party \
-           --go_out=paths=source_relative:. \
-           --go-http_out=paths=source_relative:. \
+           --go_out=paths=source_relative:./gen \
+           --go-http_out=paths=source_relative:./gen \
           ./$(FILE_NAME).proto
 
 .PHONY: errors
@@ -86,8 +87,8 @@ http:
 errors:
 	 cd $(DIR_PATH) && protoc --proto_path=. \
            --proto_path=../../../../third_party \
-           --go_out=paths=source_relative:. \
-           --go-errors_out=paths=source_relative:. \
+           --go_out=paths=source_relative:./gen \
+           --go-errors_out=paths=source_relative:./gen \
           ./$(FILE_NAME).proto
 
 .PHONY: swagger
@@ -95,22 +96,23 @@ errors:
 swagger:
 	 -cd $(DIR_PATH) && protoc --proto_path=. \
 	        --proto_path=../../../../third_party \
-	        --openapiv2_out . \
+	        --openapiv2_out ./gen \
 	        --openapiv2_opt logtostderr=true \
            ./$(FILE_NAME).proto
 
 .PHONY: proto
 # generate internal proto struct
 proto:
-	protoc --proto_path=. \
-           --proto_path=./third_party \
-           --go_out=paths=source_relative:. \
-          $(PROTO_PATH)
+	-cd $(DIR_PATH) && protoc --proto_path=. \
+           --proto_path=../../../../third_party \
+           --go_out=paths=source_relative:./gen \
+          ./$(FILE_NAME).proto
 
 .PHONY: server
 server:
 	kratos proto server $(PROTO_PATH) -t $(APP_PATH)/$(PATH_WITHOUT_PROJECT)"internal/service"
 
+UNAME_S := $(shell uname -s)
 # 替换文件内容的目标
 replace:
 	@echo "Processing proto file: $(PROTO_PATH)"
@@ -119,12 +121,17 @@ replace:
 	LAST_FOLDER=$$(basename $(PATH_WITHOUT_PROJECT)) && \
 	cd $$(dirname $(PATH_WITHOUT_PROJECT)) && \
 	echo "Running find in: $$(pwd)/$$LAST_FOLDER" && \
-	find $$LAST_FOLDER -type f -exec sh -c '\
-	sed -i "" -e "s/test/$(UPPER_FILE_NAME)/g" $$0 \
-	' {} \;
-	find $$LAST_FOLDER -type f -exec sh -c '\
-	sed -i "" -e "s/test/$(FILE_NAME)/g" $$0 \
-	' {} \;
+	if [ "$(UNAME_S)" = "Darwin" ]; then \
+		find $$LAST_FOLDER -type f -exec sed -i '' 's/Greeter/$(UPPER_FILE_NAME)/g' {} + && \
+		find $$LAST_FOLDER -type f -exec sed -i '' 's/greeter/$(FILE_NAME)/g' {} + ; \
+	else \
+		find $$LAST_FOLDER -type f -exec sh -c '\
+			sed -i "" -e "s/Greeter/$(UPPER_FILE_NAME)/g" $$0 \
+		' {} \; && \
+		find $$LAST_FOLDER -type f -exec sh -c '\
+			sed -i "" -e "s/greeter/$(FILE_NAME)/g" $$0 \
+		' {} \; ; \
+	fi
 
 .PHONY: build
 # build

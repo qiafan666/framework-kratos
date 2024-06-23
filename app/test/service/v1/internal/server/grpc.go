@@ -1,7 +1,7 @@
 package server
 
 import (
-	v1 "framework-kratos/api/test/service/v1"
+	v1 "framework-kratos/api/test/service/v1/gen"
 	"framework-kratos/app/test/service/v1/internal/conf"
 	"framework-kratos/app/test/service/v1/internal/service"
 	"github.com/go-kratos/kratos/v2/log"

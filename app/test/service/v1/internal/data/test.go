@@ -2,7 +2,7 @@ package data
 
 import (
 	"context"
-	common "framework-kratos/api/common/v1"
+	common "framework-kratos/api/common/v1/gen"
 	"framework-kratos/app/test/service/v1/model"
 	"framework-kratos/pkg/function"
 	"github.com/go-kratos/kratos/v2/log"

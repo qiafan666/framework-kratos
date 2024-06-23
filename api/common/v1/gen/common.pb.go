@@ -4,7 +4,7 @@
 // 	protoc        v5.27.1
 // source: api/common/v1/common.proto
 
-package v1
+package gen
 
 import (
 	_ "github.com/envoyproxy/protoc-gen-validate/validate"

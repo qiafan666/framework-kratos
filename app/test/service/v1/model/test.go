@@ -1,7 +1,7 @@
 package model
 
 import (
-	v1 "framework-kratos/api/test/service/v1"
+	v1 "framework-kratos/api/test/service/v1/gen"
 	"github.com/jinzhu/copier"
 	"time"
 )
