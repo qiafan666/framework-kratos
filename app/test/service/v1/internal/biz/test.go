@@ -2,7 +2,7 @@ package biz
 
 import (
 	"context"
-	common "framework-kratos/api/common/v1"
+	common "framework-kratos/api/common/v1/gen"
 	"framework-kratos/app/test/service/v1/internal/data"
 	"framework-kratos/app/test/service/v1/model"
 	"github.com/go-kratos/kratos/v2/log"
