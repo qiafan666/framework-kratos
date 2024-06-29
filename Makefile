@@ -137,3 +137,11 @@ replace:
 # build
 build:
 	mkdir -p bin/ && go build -ldflags "-X main.Version=$(VERSION)" -o ./bin/ ./...
+
+.PHONY: config
+# generate internal proto
+config:
+	-cd $(DIR_PATH) && protoc --proto_path=. \
+		   --proto_path=../../../../../../third_party \
+		   --go_out=paths=source_relative:. \
+		   $(PROTO_PATH)
