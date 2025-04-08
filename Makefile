@@ -19,13 +19,11 @@ name:
 	@echo $(FILE_NAME)
 	@echo $(UPPER_FILE_NAME)
 
-
-API_Path := "api"
 APP_PATH := "app"
 
-api: add grpc http swagger errors proto server
+proto: add grpc http swagger errors protoc server
 
-gen: add project grpc http errors swagger proto server replace
+app: project
 
 .PHONY: init
 # init env
@@ -36,17 +34,17 @@ init:
 	go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
 	go install github.com/go-kratos/kratos/cmd/kratos/v2@latest
 	go install github.com/go-kratos/kratos/cmd/protoc-gen-go-http/v2@latest
-	go install github.com/google/gnostic/cmd/protoc-gen-openapi@latest
 	go install github.com/google/wire/cmd/wire@latest
 	go install github.com/envoyproxy/protoc-gen-validate@latest
-	go install github.com/limes-cloud/kratosx/cmd/protoc-gen-go-errors@latest
+	go install github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-openapiv2@latest
+	go install github.com/go-kratos/kratos/cmd/protoc-gen-go-errors/v2@latest
 
 .PHONY: add
 # add proto
 add:
 	if [ -d $(PROTO_PATH) ]; then exit 0; fi; \
 	kratos proto add $(PROTO_PATH)
-	mkdir -p $(DIR_PATH)/gen
+	mkdir -p $(DIR_PATH)gen
 
 .PHONY: project
 # 假设您要在命令行中指定路径
@@ -67,46 +65,46 @@ project:
 .PHONY: grpc
 # generate grpc code
 grpc:
-	 cd $(DIR_PATH) && protoc --proto_path=. \
-           --proto_path=../../../../third_party \
-           --go_out=paths=source_relative:./gen \
-           --go-grpc_out=paths=source_relative:./gen \
-           ./$(FILE_NAME).proto
+	protoc --proto_path=$(DIR_PATH) \
+		   --proto_path=./third_party \
+		   --go_out=paths=source_relative:$(DIR_PATH)gen \
+		   --go-grpc_out=paths=source_relative:$(DIR_PATH)gen \
+		   $(DIR_PATH)$(FILE_NAME).proto
 
 .PHONY: http
 # generate http code
 http:
-	 cd $(DIR_PATH) && protoc --proto_path=. \
-           --proto_path=../../../../third_party \
-           --go_out=paths=source_relative:./gen \
-           --go-http_out=paths=source_relative:./gen \
-          ./$(FILE_NAME).proto
+	 protoc --proto_path=. \
+           --proto_path=./third_party \
+           --go_out=paths=source_relative:$(DIR_PATH)gen \
+           --go-http_out=paths=source_relative:$(DIR_PATH)gen \
+          $(DIR_PATH)$(FILE_NAME).proto
 
 .PHONY: errors
 # generate errors code
 errors:
-	 cd $(DIR_PATH) && protoc --proto_path=. \
-           --proto_path=../../../../third_party \
-           --go_out=paths=source_relative:./gen \
-           --go-errors_out=paths=source_relative:./gen \
-          ./$(FILE_NAME).proto
+	 protoc --proto_path=. \
+           --proto_path=./third_party \
+           --go_out=paths=source_relative:$(DIR_PATH)gen \
+           --go-errors_out=paths=source_relative:$(DIR_PATH)gen \
+          $(DIR_PATH)$(FILE_NAME).proto
 
 .PHONY: swagger
 # generate swagger
 swagger:
-	 -cd $(DIR_PATH) && protoc --proto_path=. \
-	        --proto_path=../../../../third_party \
-	        --openapiv2_out ./gen \
+	 protoc --proto_path=. \
+	        --proto_path=./third_party \
+	        --openapiv2_out $(DIR_PATH)gen \
 	        --openapiv2_opt logtostderr=true \
-           ./$(FILE_NAME).proto
+           $(DIR_PATH)$(FILE_NAME).proto
 
-.PHONY: proto
+.PHONY: protoc
 # generate internal proto struct
-proto:
-	-cd $(DIR_PATH) && protoc --proto_path=. \
-           --proto_path=../../../../third_party \
-           --go_out=paths=source_relative:./gen \
-          ./$(FILE_NAME).proto
+protoc:
+	protoc --proto_path=. \
+           --proto_path=./third_party \
+           --go_out=paths=source_relative:$(DIR_PATH)gen \
+          $(DIR_PATH)$(FILE_NAME).proto
 
 .PHONY: server
 server:
@@ -141,7 +139,7 @@ build:
 .PHONY: config
 # generate internal proto
 config:
-	-cd $(DIR_PATH) && protoc --proto_path=. \
-		   --proto_path=../../../../../../third_party \
+	protoc --proto_path=. \
+		   --proto_path=./third_party \
 		   --go_out=paths=source_relative:. \
 		   $(PROTO_PATH)
